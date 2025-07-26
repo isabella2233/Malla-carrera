@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Malla Curricular - Ingeniería Electrónica</title>
   <style>
     body {
@@ -86,15 +86,13 @@
         { name: "Programación", reqs: ["Introducción a la Ing. Electrónica"] },
         { name: "Biosistemas", reqs: ["Química Fundamentales"] }
       ],
-     "Tercer semestre": [
-  { name: "Cálculo Integral", reqs: ["Cálculo Diferencial"] },
-  { name: "Física 1", reqs: ["Cálculo Diferencial"] },
-  { name: "Laboratorio de Física 1", reqs: ["Cálculo Diferencial"] },
-  { name: "Análisis de Sistemas de Corriente Continua", reqs: ["Álgebra Lineal"] },
-  { name: "Laboratorio Análisis de Sistemas de Corriente Continua", reqs: ["Álgebra Lineal"] },
-  { name: "Programación 2", reqs: ["Programación"] }
-],
-
+      "Tercer semestre": [
+        { name: "Cálculo Integral", reqs: ["Cálculo Diferencial"] },
+        { name: "Física 1", reqs: ["Cálculo Diferencial"] },
+        { name: "Laboratorio de Física 1", reqs: ["Cálculo Diferencial"] },
+        { name: "Análisis de Sistemas de Corriente Continua", reqs: ["Álgebra Lineal"] },
+        { name: "Laboratorio Análisis de Sistemas de Corriente Continua", reqs: ["Álgebra Lineal"] },
+        { name: "Programación 2", reqs: ["Programación"] }
       ],
       "Cuarto semestre": [
         { name: "Cálculo Multivariado", reqs: ["Cálculo Integral"] },
@@ -109,7 +107,7 @@
         { name: "Laboratorio de Física 3", reqs: ["Cálculo Multivariado", "Física 2"] },
         { name: "Laboratorio de Electrónica Analógica", reqs: ["Análisis de Corriente Alterna"] },
         { name: "Introducción a Señales y Sistemas", reqs: ["Modelamiento Probabilístico para Sistemas y Señales"] },
-        { name: "Sistemas Digitales", reqs: ["Programación"] },
+        { name: "Sistemas Digitales", reqs: ["Programación 2"] },
         { name: "Electrónica Analógica", reqs: ["Análisis de Corriente Alterna"] }
       ],
       "Sexto semestre": [
@@ -149,13 +147,14 @@
       ],
       "Electivas": [
         { name: "Redes de Datos", reqs: ["Diseño de Redes de Comunicación"] },
-        { name: "Desarrollo Aplicaciones Móviles", reqs: ["Programación"] },
+        { name: "Desarrollo Aplicaciones Móviles", reqs: ["Programación 2"] },
         { name: "Redes Ópticas y Fotónica Integrada", reqs: ["Diseño de Redes de Comunicación"] },
         { name: "Electromedicina", reqs: ["Sistemas Embebidos"] },
         { name: "Robótica", reqs: ["Sistemas Biomecánicos"] },
         { name: "Comunicación Satelital y Móvil Celular", reqs: ["Diseño de Redes de Comunicación"] }
       ]
     };
+
     const grid = document.getElementById('grid');
     const aprobadas = JSON.parse(localStorage.getItem('aprobadas') || '[]');
 
