@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Curricular - Ingeniería Electrónica</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .grid {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+    }
+    .semester {
+      min-width: 250px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .semester h2 {
+      font-size: 16px;
+      text-align: center;
+      color: #00587a;
+    }
+    .subject {
+      margin: 10px 0;
+      padding: 10px;
+      background: #e8f0fe;
+      border-left: 5px solid #2196F3;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+    }
+    .subject.completed {
+      background: #c8e6c9;
+      border-left-color: #4CAF50;
+      text-decoration: line-through;
+    }
+    .subject.locked {
+      background: #f8d7da;
+      border-left-color: #dc3545;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .subject[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      left: 100%;
+      top: 0;
+      margin-left: 10px;
+      background: #333;
+      color: #fff;
+      padding: 5px;
+      font-size: 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Curricular - Ingeniería Electrónica</h1>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const malla = {
+      "Primer semestre": [
+        "Matemáticas Fundamentales",
+        "Introducción a la Ing. Electrónica",
+        "Química Fundamentales",
+        "Investigación y Pensamiento Científico"
+      ],
+      "Segundo semestre": [
+        { name: "Álgebra Lineal", reqs: ["Matemáticas Fundamentales"] },
+        { name: "Cálculo Diferencial", reqs: ["Matemáticas Fundamentales"] },
+        { name: "Programación", reqs: ["Introducción a la Ing. Electrónica"] },
+        { name: "Biosistemas", reqs: ["Química Fundamentales"] }
+      ],
+      "Tercer semestre": [
+        { name: "Cálculo Integral", reqs: ["Cálculo Diferencial"] },
+        { name: "Física 1", reqs: ["Cálculo Diferencial"] },
+        { name: "Laboratorio de Física 1", reqs: ["Cálculo Diferencial"] },
+        { name: "Análisis de Sistemas de Corriente Continua", reqs: ["Álgebra Lineal"] },
+        { name: "Laboratorio Análisis de Corriente Continua", reqs: ["Álgebra Lineal"] }
+      ],
+      "Cuarto semestre": [
+        { name: "Cálculo Multivariado", reqs: ["Cálculo Integral"] },
+        { name: "Modelamiento Probabilístico", reqs: ["Cálculo Integral"] },
+        { name: "Física 2", reqs: ["Física 1", "Laboratorio de Física 1", "Cálculo Integral"] },
+        { name: "Laboratorio de Física 2", reqs: ["Física 1", "Laboratorio de Física 1", "Cálculo Integral"] },
+        { name: "Análisis de Corriente Alterna", reqs: ["Análisis de Sistemas de Corriente Continua"] }
+      ],
+      "Quinto semestre": [
+        { name: "Ecuaciones Diferenciales Ordinarias", reqs: ["Cálculo Integral", "Álgebra Lineal"] },
+        { name: "Física 3", reqs: ["Cálculo Multivariado", "Física 2"] },
+        { name: "Laboratorio de Física 3", reqs: ["Cálculo Multivariado", "Física 2"] },
+        { name: "Laboratorio de Electrónica Analógica", reqs: ["Análisis de Corriente Alterna"] },
+        { name: "Introducción a Señales y Sistemas", reqs: ["Modelamiento Probabilístico"] },
+        { name: "Sistemas Digitales", reqs: ["Programación"] },
+        { name: "Electrónica Analógica", reqs: ["Análisis de Corriente Alterna"] }
+      ],
+      "Sexto semestre": [
+        { name: "Campos Electromagnéticos", reqs: ["Ecuaciones Diferenciales Ordinarias", "Física 2"] },
+        { name: "Sistemas Fisiológicos", reqs: ["Introducción a Señales y Sistemas", "Biosistemas"] },
+        { name: "Constitución Política y Cívica", reqs: ["70 CRÉDITOS"] },
+        { name: "Arquitectura de Sistemas de Cómputo", reqs: ["Sistemas Digitales"] },
+        { name: "Creación de Empresas de Base Tecnológica", reqs: ["60 CRÉDITOS"] },
+        { name: "Sistemas Analógicos", reqs: ["Electrónica Analógica"] }
+      ],
+      "Séptimo semestre": [
+        { name: "Sistemas de Comunicación", reqs: ["Campos Electromagnéticos"] },
+        { name: "Sistemas Biomecánicos", reqs: ["Sistemas Fisiológicos"] },
+        { name: "Procesamiento de Señales", reqs: ["Introducción a Señales y Sistemas"] },
+        { name: "Microcontroladores", reqs: ["Arquitectura de Sistemas de Cómputo"] },
+        { name: "Instrumentación Electrónica", reqs: ["Sistemas Analógicos"] },
+        { name: "Manejo de Residuos Electrónicos", reqs: ["82 CRÉDITOS", "Sistemas Analógicos"] }
+      ],
+      "Octavo semestre": [
+        { name: "Sistemas de Control", reqs: ["Instrumentación Electrónica"] },
+        { name: "Automatización Industrial", reqs: ["Instrumentación Electrónica"] },
+        { name: "Prácticas Académicas", reqs: ["95 CRÉDITOS"] },
+        { name: "Sistemas Embebidos", reqs: ["Microcontroladores"] },
+        { name: "Diseño de Redes de Comunicación", reqs: ["Sistemas de Comunicación"] }
+      ],
+      "Noveno semestre": [
+        { name: "Introducción a la Ciencia de Datos", reqs: ["Procesamiento de Señales"] },
+        { name: "Control Digital", reqs: ["Sistemas de Control"] },
+        { name: "Diseño Electrónico", reqs: ["Sistemas Embebidos"] },
+        { name: "Electrónica Industrial", reqs: ["Automatización Industrial"] },
+        { name: "Seminario de Investigación", reqs: ["120 CRÉDITOS"] }
+      ],
+      "Décimo semestre": [
+        { name: "Trabajo de Grado", reqs: ["Seminario de Investigación"] },
+        { name: "Reconocimiento de Patrones", reqs: ["Introducción a la Ciencia de Datos"] },
+        { name: "Cátedra de la Paz" }
+      ],
+      "Electivas": [
+        { name: "Redes de Datos", reqs: ["Diseño de Redes de Comunicación"] },
+        { name: "Desarrollo de Aplicaciones Móviles", reqs: ["Programación"] },
+        { name: "Redes Ópticas y Fotónica Integrada", reqs: ["Diseño de Redes de Comunicación"] },
+        { name: "Electromedicina", reqs: ["Sistemas Embebidos"] },
+        { name: "Robótica", reqs: ["Sistemas Biomecánicos"] },
+        { name: "Comunicación Satelital y Móvil Celular", reqs: ["Diseño de Redes de Comunicación"] }
+      ]
+    };
+
+    const grid = document.getElementById('grid');
+    const aprobadas = JSON.parse(localStorage.getItem('aprobadas') || '[]');
+
+    function saveProgress() {
+      localStorage.setItem('aprobadas', JSON.stringify(aprobadas));
+    }
+
+    function isApproved(name) {
+      if (/CRÉDITOS/.test(name)) {
+       
