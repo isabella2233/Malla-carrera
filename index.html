@@ -1,232 +1,231 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Malla Curricular - Ingeniería Electrónica</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f4f8;
+      background-color: #ecf0f1;
       margin: 0;
       padding: 20px;
     }
     h1 {
       text-align: center;
-      color: #333;
+      margin-bottom: 30px;
     }
     .grid {
       display: flex;
-      overflow-x: auto;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 20px;
-      padding-bottom: 40px;
     }
     .semester {
-      min-width: 250px;
       background: #fff;
       border-radius: 10px;
-      padding: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      padding: 15px;
+      width: 280px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     .semester h2 {
-      font-size: 16px;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #2c3e50;
       text-align: center;
-      color: #00587a;
     }
-    .subject {
-      margin: 8px 0;
+    .course {
+      background: #dfe6e9;
       padding: 10px;
-      background: #e8f0fe;
-      border-left: 5px solid #2196F3;
-      border-radius: 5px;
+      margin: 5px 0;
+      border-radius: 6px;
       cursor: pointer;
       position: relative;
-      transition: 0.2s;
+      transition: 0.3s;
     }
-    .subject.completed {
-      background: #c8e6c9;
-      border-left-color: #4CAF50;
+    .course.approved {
+      background-color: #55efc4;
       text-decoration: line-through;
     }
-    .subject.locked {
-      background: #f8d7da;
-      border-left-color: #dc3545;
+    .course.locked {
+      background-color: #b2bec3;
       cursor: not-allowed;
-      opacity: 0.6;
     }
-    .subject[title]:hover::after {
-      content: attr(title);
-      position: absolute;
-      left: 100%;
-      top: 0;
-      margin-left: 10px;
-      background: #333;
+    .tooltip {
+      visibility: hidden;
+      background-color: #2d3436;
       color: #fff;
+      text-align: center;
+      border-radius: 6px;
       padding: 5px;
-      font-size: 12px;
-      border-radius: 4px;
-      white-space: nowrap;
-      z-index: 999;
+      position: absolute;
+      z-index: 1;
+      top: -5px;
+      left: 105%;
+      width: 160px;
+    }
+    .course.locked:hover .tooltip {
+      visibility: visible;
     }
   </style>
 </head>
 <body>
   <h1>Malla Curricular - Ingeniería Electrónica</h1>
-  <div class="grid" id="grid"></div>
+  <div class="grid" id="malla"></div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const malla = {
-        "Primer semestre": [
-          "Matemáticas Fundamentales",
-          "Introducción a la Ing. Electrónica",
-          "Química Fundamentales",
-          "Investigación y Pensamiento Científico"
-        ],
-        "Segundo semestre": [
-          { name: "Álgebra Lineal", reqs: ["Matemáticas Fundamentales"] },
-          { name: "Cálculo Diferencial", reqs: ["Matemáticas Fundamentales"] },
-          { name: "Programación", reqs: ["Introducción a la Ing. Electrónica"] },
-          { name: "Biosistemas", reqs: ["Química Fundamentales"] }
-        ],
-        "Tercer semestre": [
-          { name: "Cálculo Integral", reqs: ["Cálculo Diferencial"] },
-          { name: "Física 1", reqs: ["Cálculo Diferencial"] },
-          { name: "Laboratorio de Física 1", reqs: ["Cálculo Diferencial"] },
-          { name: "Análisis de Sistemas de Corriente Continua", reqs: ["Álgebra Lineal"] },
-          { name: "Laboratorio Análisis de Sistemas de Corriente Continua", reqs: ["Álgebra Lineal"] },
-          { name: "Programación 2", reqs: ["Programación"] }
-        ],
-        "Cuarto semestre": [
-          { name: "Cálculo Multivariado", reqs: ["Cálculo Integral"] },
-          { name: "Modelamiento Probabilístico para Sistemas y Señales", reqs: ["Cálculo Integral"] },
-          { name: "Física 2", reqs: ["Física 1", "Laboratorio de Física 1", "Cálculo Integral"] },
-          { name: "Laboratorio de Física 2", reqs: ["Física 1", "Laboratorio de Física 1", "Cálculo Integral"] },
-          { name: "Análisis de Corriente Alterna", reqs: ["Análisis de Sistemas de Corriente Continua"] }
-        ],
-        "Quinto semestre": [
-          { name: "Ecuaciones Diferenciales Ordinarias", reqs: ["Cálculo Integral", "Álgebra Lineal"] },
-          { name: "Física 3", reqs: ["Cálculo Multivariado", "Física 2"] },
-          { name: "Laboratorio de Física 3", reqs: ["Cálculo Multivariado", "Física 2"] },
-          { name: "Laboratorio de Electrónica Analógica", reqs: ["Análisis de Corriente Alterna"] },
-          { name: "Introducción a Señales y Sistemas", reqs: ["Modelamiento Probabilístico para Sistemas y Señales"] },
-          { name: "Sistemas Digitales", reqs: ["Programación 2"] },
-          { name: "Electrónica Analógica", reqs: ["Análisis de Corriente Alterna"] }
-        ],
-        "Sexto semestre": [
-          { name: "Campos Electromagnéticos", reqs: ["Ecuaciones Diferenciales Ordinarias", "Física 2"] },
-          { name: "Sistemas Fisiológicos", reqs: ["Introducción a Señales y Sistemas", "Biosistemas"] },
-          { name: "Constitución Política y Cívica", reqs: ["70 CRÉDITOS"] },
-          { name: "Arquitectura de Sistemas de Cómputo", reqs: ["Sistemas Digitales"] },
-          { name: "Creación de Empresas de Base Tecnológica", reqs: ["60 CRÉDITOS"] },
-          { name: "Sistemas Analógicos", reqs: ["Electrónica Analógica"] }
-        ],
-        "Séptimo semestre": [
-          { name: "Sistemas de Comunicación", reqs: ["Campos Electromagnéticos"] },
-          { name: "Sistemas Biomecánicos", reqs: ["Sistemas Fisiológicos"] },
-          { name: "Procesamiento de Señales", reqs: ["Introducción a Señales y Sistemas"] },
-          { name: "Microcontroladores", reqs: ["Arquitectura de Sistemas de Cómputo"] },
-          { name: "Instrumentación Electrónica", reqs: ["Sistemas Analógicos"] },
-          { name: "Manejo de Residuos Electrónicos", reqs: ["82 CRÉDITOS", "Sistemas Analógicos"] }
-        ],
-        "Octavo semestre": [
-          { name: "Sistemas de Control", reqs: ["Instrumentación Electrónica"] },
-          { name: "Automatización Industrial", reqs: ["Instrumentación Electrónica"] },
-          { name: "Prácticas Académicas", reqs: ["95 CRÉDITOS"] },
-          { name: "Sistemas Embebidos", reqs: ["Microcontroladores"] },
-          { name: "Diseño de Redes de Comunicación", reqs: ["Sistemas de Comunicación"] }
-        ],
-        "Noveno semestre": [
-          { name: "Introducción a la Ciencia de Datos", reqs: ["Procesamiento de Señales"] },
-          { name: "Control Digital", reqs: ["Sistemas de Control"] },
-          { name: "Diseño Electrónico", reqs: ["Sistemas Embebidos"] },
-          { name: "Electrónica Industrial", reqs: ["Automatización Industrial"] },
-          { name: "Seminario de Investigación", reqs: ["120 CRÉDITOS"] }
-        ],
-        "Décimo semestre": [
-          { name: "Trabajo de Grado", reqs: ["Seminario de Investigación"] },
-          { name: "Reconocimiento de Patrones", reqs: ["Introducción a la Ciencia de Datos"] },
-          "Cátedra de la Paz"
-        ],
-        "Electivas": [
-          { name: "Redes de Datos", reqs: ["Diseño de Redes de Comunicación"] },
-          { name: "Desarrollo Aplicaciones Móviles", reqs: ["Programación 2"] },
-          { name: "Redes Ópticas y Fotónica Integrada", reqs: ["Diseño de Redes de Comunicación"] },
-          { name: "Electromedicina", reqs: ["Sistemas Embebidos"] },
-          { name: "Robótica", reqs: ["Sistemas Biomecánicos"] },
-          { name: "Comunicación Satelital y Móvil Celular", reqs: ["Diseño de Redes de Comunicación"] }
-        ]
-      };
+    const cursos = {
+      "Primer semestre": [
+        { id: "mat_fund", nombre: "Matemáticas Fundamentales" },
+        { id: "intro_ie", nombre: "Introducción a la Ing. Electrónica" },
+        { id: "quimica", nombre: "Química Fundamental" },
+        { id: "inv_cient", nombre: "Investigación y Pensamiento Científico" }
+      ],
+      "Segundo semestre": [
+        { id: "algebra", nombre: "Álgebra Lineal", req: ["mat_fund"] },
+        { id: "cal_dif", nombre: "Cálculo Diferencial", req: ["mat_fund"] },
+        { id: "prog1", nombre: "Programación", req: ["intro_ie"] },
+        { id: "biosistemas", nombre: "Biosistemas", req: ["quimica"] }
+      ],
+      "Tercer semestre": [
+        { id: "prog2", nombre: "Programación 2", req: ["prog1"] },
+        { id: "cal_int", nombre: "Cálculo Integral", req: ["cal_dif"] },
+        { id: "fisica1", nombre: "Física 1", req: ["cal_dif"] },
+        { id: "lab_fis1", nombre: "Laboratorio de Física 1", req: ["cal_dif"] },
+        { id: "analisis_dc", nombre: "Análisis de Sistemas DC", req: ["algebra"] },
+        { id: "lab_dc", nombre: "Lab. Sistemas DC", req: ["algebra"] }
+      ],
+      "Cuarto semestre": [
+        { id: "cal_mul", nombre: "Cálculo Multivariado", req: ["cal_int"] },
+        { id: "model_prob", nombre: "Modelamiento Probabilístico", req: ["cal_int"] },
+        { id: "fisica2", nombre: "Física 2", req: ["fisica1", "lab_fis1", "cal_int"] },
+        { id: "lab_fis2", nombre: "Lab. Física 2", req: ["fisica1", "lab_fis1", "cal_int"] },
+        { id: "analisis_ca", nombre: "Análisis Corriente AC", req: ["analisis_dc"] }
+      ],
+      "Quinto semestre": [
+        { id: "ecuaciones", nombre: "Ecuaciones Diferenciales", req: ["cal_int", "algebra"] },
+        { id: "fisica3", nombre: "Física 3", req: ["cal_mul", "fisica2"] },
+        { id: "lab_fis3", nombre: "Lab. Física 3", req: ["cal_mul", "fisica2"] },
+        { id: "lab_elec", nombre: "Lab. Electrónica Analógica", req: ["analisis_ca"] },
+        { id: "intro_senales", nombre: "Intro a Señales y Sistemas", req: ["model_prob"] },
+        { id: "sis_digitales", nombre: "Sistemas Digitales", req: ["prog2"] },
+        { id: "elec_analog", nombre: "Electrónica Analógica", req: ["analisis_ca"] }
+      ],
+      "Sexto semestre": [
+        { id: "campos", nombre: "Campos Electromagnéticos", req: ["ecuaciones", "fisica2"] },
+        { id: "sis_fisio", nombre: "Sistemas Fisiológicos", req: ["intro_senales", "biosistemas"] },
+        { id: "constitucion", nombre: "Constitución Política y Cívica", reqCred: 70 },
+        { id: "arquitectura", nombre: "Arquitectura de Sistemas", req: ["sis_digitales"] },
+        { id: "empresas", nombre: "Creación Empresas Tecnológicas", reqCred: 60 },
+        { id: "sis_analog", nombre: "Sistemas Analógicos", req: ["elec_analog"] }
+      ],
+      "Séptimo semestre": [
+        { id: "comunicaciones", nombre: "Sistemas de Comunicación", req: ["campos"] },
+        { id: "biomecanicos", nombre: "Sistemas Biomecánicos", req: ["sis_fisio"] },
+        { id: "proc_senales", nombre: "Procesamiento de Señales", req: ["intro_senales"] },
+        { id: "micro", nombre: "Microcontroladores", req: ["arquitectura"] },
+        { id: "instrumentacion", nombre: "Instrumentación Electrónica", req: ["sis_analog"] },
+        { id: "residuos", nombre: "Manejo de Residuos Electrónicos", req: ["sis_analog"], reqCred: 82 }
+      ],
+      "Octavo semestre": [
+        { id: "control", nombre: "Sistemas de Control", req: ["instrumentacion"] },
+        { id: "automatizacion", nombre: "Automatización Industrial", req: ["instrumentacion"] },
+        { id: "practicas", nombre: "Prácticas Académicas", reqCred: 95 },
+        { id: "embebidos", nombre: "Sistemas Embebidos", req: ["micro"] },
+        { id: "redes", nombre: "Diseño de Redes de Comunicación", req: ["comunicaciones"] }
+      ],
+      "Noveno semestre": [
+        { id: "ciencia_datos", nombre: "Intro a Ciencia de Datos", req: ["proc_senales"] },
+        { id: "control_digital", nombre: "Control Digital", req: ["control"] },
+        { id: "diseno_electronico", nombre: "Diseño Electrónico", req: ["embebidos"] },
+        { id: "elec_industrial", nombre: "Electrónica Industrial", req: ["automatizacion"] },
+        { id: "seminario", nombre: "Seminario de Investigación", reqCred: 120 }
+      ],
+      "Décimo semestre": [
+        { id: "trabajo_grado", nombre: "Trabajo de Grado", req: ["seminario"] },
+        { id: "reconocimiento", nombre: "Reconocimiento de Patrones", req: ["ciencia_datos"] },
+        { id: "paz", nombre: "Cátedra de la Paz" }
+      ],
+      "Electivas": [
+        { id: "redes_datos", nombre: "Redes de Datos", req: ["redes"] },
+        { id: "moviles", nombre: "Desarrollo Aplicaciones Móviles", req: ["prog2"] },
+        { id: "optica", nombre: "Redes Ópticas y Fotónica", req: ["redes"] },
+        { id: "electromedicina", nombre: "Electromedicina", req: ["embebidos"] },
+        { id: "robotica", nombre: "Robótica", req: ["biomecanicos"] },
+        { id: "satelital", nombre: "Comunicación Satelital y Móvil", req: ["redes"] }
+      ]
+    };
 
-      const grid = document.getElementById('grid');
-      const aprobadas = JSON.parse(localStorage.getItem('aprobadas') || '[]');
+    const aprobadas = JSON.parse(localStorage.getItem("aprobadas")) || [];
 
-      function saveProgress() {
-        localStorage.setItem('aprobadas', JSON.stringify(aprobadas));
-      }
+    function contarCreditos() {
+      return aprobadas.length * 3; // Asumimos cada materia = 3 créditos
+    }
 
-      function isApproved(name) {
-        const creditMatch = name.match(/(\d+)\s*CRÉDITOS/);
-        if (creditMatch) {
-          const requiredCredits = parseInt(creditMatch[1]);
-          return aprobadas.length >= requiredCredits;
-        }
-        return aprobadas.includes(name);
-      }
+    function crearMalla() {
+      const container = document.getElementById("malla");
+      container.innerHTML = "";
 
-      function canUnlock(subject) {
-        if (typeof subject === 'string') return true;
-        return subject.reqs.every(req => isApproved(req));
-      }
+      for (const [semestre, materias] of Object.entries(cursos)) {
+        const col = document.createElement("div");
+        col.className = "semester";
+        const title = document.createElement("h2");
+        title.textContent = semestre;
+        col.appendChild(title);
 
-      function renderGrid() {
-        grid.innerHTML = '';
-        for (const [semestre, materias] of Object.entries(malla)) {
-          const column = document.createElement('div');
-          column.className = 'semester';
-          column.innerHTML = `<h2>${semestre}</h2>`;
+        materias.forEach(mat => {
+          const div = document.createElement("div");
+          div.className = "course";
+          div.textContent = mat.nombre;
 
-          materias.forEach(materia => {
-            const name = typeof materia === 'string' ? materia : materia.name;
-            const reqs = typeof materia === 'string' ? [] : materia.reqs || [];
-
-            const box = document.createElement('div');
-            box.className = 'subject';
-            box.textContent = name;
-
-            if (isApproved(name)) {
-              box.classList.add('completed');
-            } else if (!canUnlock(materia)) {
-              box.classList.add('locked');
-              box.title = "Requiere: " + reqs.filter(req => !isApproved(req)).join(", ");
-            }
-
-            box.addEventListener('click', () => {
-              if (box.classList.contains('locked')) return;
-
-              if (box.classList.contains('completed')) {
-                box.classList.remove('completed');
-                const index = aprobadas.indexOf(name);
-                if (index > -1) aprobadas.splice(index, 1);
-              } else {
-                box.classList.add('completed');
-                aprobadas.push(name);
-              }
-
-              saveProgress();
-              renderGrid();
+          const faltan = [];
+          if (mat.req) {
+            mat.req.forEach(r => {
+              if (!aprobadas.includes(r)) faltan.push(cursosPorID(r));
             });
+          }
 
-            column.appendChild(box);
+          if (mat.reqCred && contarCreditos() < mat.reqCred) {
+            faltan.push(`${mat.reqCred} créditos`);
+          }
+
+          if (aprobadas.includes(mat.id)) {
+            div.classList.add("approved");
+          } else if (faltan.length > 0) {
+            div.classList.add("locked");
+            const tip = document.createElement("span");
+            tip.className = "tooltip";
+            tip.textContent = "Requiere: " + faltan.join(", ");
+            div.appendChild(tip);
+          }
+
+          div.addEventListener("click", () => {
+            if (faltan.length === 0) {
+              if (aprobadas.includes(mat.id)) {
+                aprobadas.splice(aprobadas.indexOf(mat.id), 1);
+              } else {
+                aprobadas.push(mat.id);
+              }
+              localStorage.setItem("aprobadas", JSON.stringify(aprobadas));
+              crearMalla();
+            }
           });
 
-          grid.appendChild(column);
-        }
-      }
+          col.appendChild(div);
+        });
 
-      renderGrid();
-    });
+        container.appendChild(col);
+      }
+    }
+
+    function cursosPorID(id) {
+      for (const grupo of Object.values(cursos)) {
+        const curso = grupo.find(c => c.id === id);
+        if (curso) return curso.nombre;
+      }
+      return id;
+    }
+
+    crearMalla();
   </script>
 </body>
 </html>
-
-
