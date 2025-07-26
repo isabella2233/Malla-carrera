@@ -162,4 +162,64 @@
 
     function isApproved(name) {
       if (/CRÉDITOS/.test(name)) {
-       
+               const creditMatch = name.match(/(\d+) CRÉDITOS/);
+        if (!creditMatch) return true;
+        const requiredCredits = parseInt(creditMatch[1]);
+        return aprobadas.length >= requiredCredits;
+      }
+      return aprobadas.includes(name);
+    }
+
+    function canUnlock(subject) {
+      if (typeof subject === 'string') return true;
+      return subject.reqs.every(req => isApproved(req));
+    }
+
+    function renderGrid() {
+      grid.innerHTML = '';
+      for (const [semestre, materias] of Object.entries(malla)) {
+        const column = document.createElement('div');
+        column.className = 'semester';
+        column.innerHTML = `<h2>${semestre}</h2>`;
+
+        materias.forEach(materia => {
+          const name = typeof materia === 'string' ? materia : materia.name;
+          const reqs = typeof materia === 'string' ? [] : materia.reqs || [];
+
+          const box = document.createElement('div');
+          box.className = 'subject';
+          box.textContent = name;
+
+          if (isApproved(name)) {
+            box.classList.add('completed');
+          } else if (!canUnlock(materia)) {
+            box.classList.add('locked');
+            box.title = "Requiere: " + reqs.filter(req => !isApproved(req)).join(", ");
+          }
+
+          box.addEventListener('click', () => {
+            if (box.classList.contains('locked')) return;
+            if (box.classList.contains('completed')) {
+              box.classList.remove('completed');
+              const index = aprobadas.indexOf(name);
+              if (index > -1) aprobadas.splice(index, 1);
+            } else {
+              box.classList.add('completed');
+              aprobadas.push(name);
+            }
+            saveProgress();
+            renderGrid();
+          });
+
+          column.appendChild(box);
+        });
+
+        grid.appendChild(column);
+      }
+    }
+
+    renderGrid();
+  </script>
+</body>
+</html>
+
